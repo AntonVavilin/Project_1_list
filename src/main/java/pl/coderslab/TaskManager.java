@@ -1,9 +1,12 @@
 package pl.coderslab;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -28,10 +31,15 @@ public class TaskManager {
                 System.exit(0);
             } else if (line.equals("add")) {
                 addTask();
-
-
             } else if (line.equals("remove")) {
-
+                try {
+                    Scanner indexToRemove = new Scanner(System.in);
+                    System.out.println("Please enter the task id you would like to remove");
+                    String taskId = indexToRemove.nextLine();
+                    removeTask(tasks, Integer.parseInt(taskId));
+                } catch (IndexOutOfBoundsException e) {
+                    System.out.println("Please enter a valid task id");
+                }
 
             } else if (line.equals("list")) {
                 showList(tasks);
@@ -48,7 +56,7 @@ public class TaskManager {
     public static String[][] loadDataToTab(String fileName) {
         Path path = Paths.get(fileName);
         String[][] table = null;
-        try{
+        try {
             List<String> lines = Files.readAllLines(path);
             table = new String[lines.size()][lines.get(0).split(",").length];
             for (int i = 0; i < lines.size(); i++) {
@@ -62,6 +70,7 @@ public class TaskManager {
         }
         return table;
     }
+
     public static void saveDataToTab(String fileName, String[][] table) {
         Path path = Paths.get(fileName);
 
@@ -70,13 +79,14 @@ public class TaskManager {
             lines[i] = table[i][0];
         }
 
-        try{
+        try {
             Files.write(path, Arrays.asList(lines));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
     }
+
     private static void addTask() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Please add task description");
@@ -91,7 +101,8 @@ public class TaskManager {
         tasks[tasks.length - 1][1] = dueDate;
         tasks[tasks.length - 1][2] = isImportant;
     }
-    public static void  showList(String[][] table) {
+
+    public static void showList(String[][] table) {
         for (int i = 0; i < table.length; i++) {
             System.out.print(i + " : ");
             for (int j = 0; j < table[i].length; j++) {
@@ -100,5 +111,15 @@ public class TaskManager {
             System.out.println();
         }
 
+    }
+
+    public static void removeTask(String[][] table, int index) {
+        try {
+            tasks = ArrayUtils.remove(table, index);
+
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Task with following index does not exist");
+            ;
+        }
     }
 }
