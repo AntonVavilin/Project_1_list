@@ -17,11 +17,18 @@ public class TaskManager {
     static final String[] OPTIONS = {"add", "remove", "list", "exit"};
     static String[][] tasks;
 
+    public static void colorOptions(String[] options) {
+        System.out.println(ConsoleColors.BLUE);
+        System.out.println("Welcome to Task Manager!. Please enter one of the following options" + ConsoleColors.RESET);
+        for (String option : options) {
+            System.out.println(option);
+        }
+    }
+
     public static void main(String[] args) {
         tasks = loadDataToTab(FILE_NAME);
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Welcome to Task Manager!. Please enter one of the following options");
-        System.out.println(Arrays.toString(OPTIONS));
+        colorOptions(OPTIONS);
         while (true) {
             String line = scanner.nextLine();
 
@@ -37,7 +44,7 @@ public class TaskManager {
                     System.out.println("Please enter the task id you would like to remove");
                     String taskId = indexToRemove.nextLine();
                     removeTask(tasks, Integer.parseInt(taskId));
-                } catch (IndexOutOfBoundsException e) {
+                } catch (IndexOutOfBoundsException | NumberFormatException e) {
                     System.out.println("Please enter a valid task id");
                 }
 
@@ -114,12 +121,7 @@ public class TaskManager {
     }
 
     public static void removeTask(String[][] table, int index) {
-        try {
-            tasks = ArrayUtils.remove(table, index);
+        tasks = ArrayUtils.remove(table, index);
 
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("Task with following index does not exist");
-            ;
-        }
     }
 }
