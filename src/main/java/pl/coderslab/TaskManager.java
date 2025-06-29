@@ -61,19 +61,35 @@ public class TaskManager {
     }
 
     public static String[][] loadDataToTab(String fileName) {
-        Path path = Paths.get(fileName);
+        Path file = Paths.get(fileName);
+        if (!Files.exists(file)) {
+            System.out.println("File does not exist");
+            return null;
+        }
+
         String[][] table = null;
         try {
-            List<String> lines = Files.readAllLines(path);
-            table = new String[lines.size()][lines.get(0).split(",").length];
+            List<String> lines = Files.readAllLines(file);
+
+            if (lines.isEmpty()) {
+                System.out.println("File is empty");
+                return null;
+            }
+
+            table = new String[lines.size()][];
             for (int i = 0; i < lines.size(); i++) {
                 String[] split = lines.get(i).split(",");
+                table[i] = new String[3];
                 for (int j = 0; j < split.length; j++) {
                     table[i][j] = split[j];
                 }
+                for (int j = split.length; j < 3; j++) {
+                    table[i][j] = "";
+                }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("An error occurred while reading the file: " + e.getMessage());
+            return null;
         }
         return table;
     }
@@ -83,7 +99,7 @@ public class TaskManager {
 
         String[] lines = new String[table.length];
         for (int i = 0; i < table.length; i++) {
-            lines[i] = table[i][0];
+            lines[i] = String.join(",", table[i]);
         }
 
         try {
